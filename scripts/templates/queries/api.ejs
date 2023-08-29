@@ -38,22 +38,21 @@ const buildPathQueryKey = ({ path }) =>
                                 : `'${segment}'`
                 );
 
-const basicTypes = ['void', 'number', 'string', 'null', 'boolean'];
-
-const addDtoSuffix = (type) => basicTypes.includes(type) ? type : type.replace(/[()]/g, '').replace(/([a-zA-Z]+)(?=\[|$)/, '$1Dto');
+const removeBracket = (type) => type.replace(/[()]/g, '')
 
 const getRequestParams = ({ parameters = [], query, payload }) => ({
     withTypes: [
-        ...parameters.map(({ name, type }) => `${name}: ${addDtoSuffix(type)}`),
-        query ? `params: ${addDtoSuffix(query.type)}` : '',
-        payload ? `body: ${addDtoSuffix(payload.type)}` : '',
+        ...parameters.map(({ name, type, optional }) => `${name}${optional ? '?' : ''}: ${removeBracket(type)}`),
+        query ? `params${query.optional ? '?' : ''}: ${removeBracket(query.type)}` : '',
+        payload ? `body${payload.optional ? '?' : ''}: ${removeBracket(payload.type)}` : '',
     ].filter(Boolean).join(', '),
     withoutTypes: [
-        ...parameters.map(({ name }) => `${name}`),
+        ...parameters.map(({ name, optional }) => `${name}${optional ? '?' : ''}`),
         query ? `params` : '',
         payload ? 'body' : '',
     ].filter(Boolean).join(', ')
 });
+
 
 const queryConfigs = routes
         .filter(({ request: { method } }) => method === 'get')
@@ -69,8 +68,8 @@ const queryConfigs = routes
                 route,
                 functionName: camelCase(functionName),
                 hookName: `use${pascalCase(functionName)}Query`,
-                suspenseHookName: `useSuspense${pascalCase(functionName)}Query`,
-                responseDto: addDtoSuffix(response.type),
+                suspenseHookName: `use${pascalCase(functionName)}SuspenseQuery`,
+                responseDto: removeBracket(response.type),
                 requestParams,
                 requestParamsWithoutTypes,
                 queryKeyName: `GET_${queryKeyName}`,
@@ -82,12 +81,13 @@ const queryConfigs = routes
             };
         });
 
-const allDto = queryConfigs.map(v=>v.responseDto.replace(/[\[\]]/g, '')).join(',');
+const allDto =modelTypes.map(v=>v.name);
 %>
 
 import { DefaultError, useQuery, useSuspenseQuery, UseQueryOptions, UseSuspenseQueryOptions } from '@tanstack/react-query';
 
 import { <%~ allDto %> } from '@/shared/api';
+
 import { <%~ moduleName %>Api } from './api';
 
 
@@ -121,6 +121,7 @@ return useQuery({
 ...options,
 })
 }
+
 <% } %>
 
 // ------------------ Suspense Query --------------------------
@@ -138,4 +139,5 @@ return useSuspenseQuery({
 ...options,
 })
 }
+
 <% } %>

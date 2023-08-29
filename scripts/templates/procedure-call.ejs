@@ -15,24 +15,30 @@ const pathParams = _.values(route.request.parameters);
 const hasPathParams = pathParams.length > 0;
 const payload = route.request.payload;
 const query = route.request.query;
+
+const generateParams = (params, query, payload) => {
+    const paramList = [
+        ...(params ? params.map(param => `${param.name}${param.optional ? '?' : ''}: ${param.type}`) : []),
+        ...(query ? [`params${query.optional ? '?' : ''}: ${query.type}`] : []),
+        ...(payload ? [`data${payload.optional ? '?' : ''}: ${payload.type}`] : []),
+        'kyInstance?: KyInstance'
+    ];
+    return paramList.join(', ');
+};
 %>
 
 /**
 <%~ routeDocs.lines %>
 */
-async <%= functionName %>(<%=
-[
-    ...(hasPathParams ? pathParams.map(param => `${param.name}: ${param.type}`) : []),
-    ...(query ? [`params: ${query.type}`] : []),
-    ...(payload ? [`data: ${payload.type}`] : [])
-].join(', ')
-%>) {
-return this.instance.<%= route.request.method.toLowerCase() %>(`<%= route.request.path.replace(/{/g, '{').replace(/}/g, '}').slice(1,) %>`, {
+<%= functionName %>(<%~ generateParams(pathParams, query, payload) %>) {
+const instance = kyInstance ?? this.instance;
+
+return instance.<%= route.request.method.toLowerCase() %><<%= responseType %>>(`<%= route.request.path.replace(/{/g, '{').replace(/}/g, '}').slice(1,) %>`,{
 <% if (query) { %>
     searchParams: params,
 <% } %>
 <% if (payload) { %>
     json: data,
 <% } %>
-}).json<<%= responseType %>>();
+}).json();
 }

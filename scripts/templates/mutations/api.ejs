@@ -16,23 +16,23 @@ const getFunctionName = ({ request: { method, path } }) =>
                 )
                 .join('_'))}`;
 
-const basicTypes = ['void', 'number', 'string', 'null', 'boolean'];
+const removeBracket = (type) => type.replace(/[()]/g, '')
 
-const addDtoSuffix = (type) => basicTypes.includes(type) ? type : type.replace(/[()]/g, '').replace(/([a-zA-Z]+)(?=\[|$)/, '$1Dto');
-
-const getRequestParams = ({ parameters = [], payload }) => ({
+const getRequestParams = ({ parameters = [], query, payload }) => ({
     withTypes: [
-        ...parameters.map(({ name, type }) => `${name}: ${addDtoSuffix(type)}`),
-        payload ? `body: ${addDtoSuffix(payload.type)}` : '',
+        ...parameters.map(({ name, type, optional }) => `${name}${optional ? '?' : ''}: ${removeBracket(type)}`),
+        query ? `params${query.optional ? '?' : ''}: ${removeBracket(query.type)}` : '',
+        payload ? `body${payload.optional ? '?' : ''}: ${removeBracket(payload.type)}` : '',
     ].filter(Boolean).join(', '),
     withoutTypes: [
-        ...parameters.map(({ name }) => `${name}`),
+        ...parameters.map(({ name, optional }) => `${name}${optional ? '?' : ''}`),
+        query ? `params` : '',
         payload ? 'body' : '',
     ].filter(Boolean).join(', ')
 });
 
 const mutationConfigs = routes
-        .filter(({ request: { method } }) => method === 'post' || method === 'patch' ||  method === 'put' ||method === 'delete')
+        .filter(({ request: { method } }) => method === 'post' || method === 'patch' || method === 'put' || method === 'delete')
         .map(route => {
             const functionName = getFunctionName(route);
             const { request, response } = route;
@@ -43,7 +43,7 @@ const mutationConfigs = routes
                 route,
                 functionName: camelCase(functionName),
                 hookName: `use${pascalCase(functionName)}Mutation`,
-                responseDto: addDtoSuffix(response.type),
+                responseDto: removeBracket(response.type),
                 hasVariables: requestParams.length > 0,
                 requestParams,
                 requestParamsWithoutTypes,
@@ -55,6 +55,7 @@ if (mutationConfigs.length > 0) {
             .filter(config => config.hasVariables)
             .map(config => `type T${pascalCase(config.functionName)}Variables = { ${config.requestParams} };`)
             .join('\n');
+
 %>
 
 import {
@@ -63,7 +64,9 @@ useMutation,
 UseMutationOptions,
 useQueryClient,
 } from '@tanstack/react-query';
-import { <%= [...mutationConfigs.map(c => c.responseDto), ...mutationConfigs.map(c => c.requestParams)].join(', ') %> } from '@/shared/api';
+
+import { <%~ modelTypes.map(v=>v.name) %> } from '@/shared/api';
+
 import { <%= moduleName %>Api } from './api';
 
 const mutations = {
@@ -81,6 +84,7 @@ const mutations = {
 <% for (const mutationConfig of mutationConfigs) {
     const routeDocs = includeFile("../route-docs.ejs", { config, route: mutationConfig.route, utils });
 %>
+
 /**
 <%~ routeDocs.lines %>
 */
@@ -98,7 +102,7 @@ return useMutation({
 
 <% } %>
 
-<%= variableTypes %>
+<%~ variableTypes %>
 
 <%
 } else { %>

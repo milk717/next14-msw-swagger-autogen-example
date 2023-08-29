@@ -13,36 +13,44 @@ export class TodoApi {
    * @tags todo
    * @summary 모든 TODO 리스트 목록을 조회합니다.
    * @request GET:/todos*/
-  async getTodos() {
-    return this.instance.get(`todos`, {}).json<ToDoDto[]>();
+  getTodos(kyInstance?: KyInstance) {
+    const instance = kyInstance ?? this.instance;
+
+    return instance.get<ToDoDto[]>(`todos`, {}).json();
   }
 
   /**
    * @tags todo
    * @summary ID를 사용해 TODO 리스트를 단건 조회합니다.
    * @request GET:/todos/{id}*/
-  async getTodosById(id: number) {
-    return this.instance.get(`todos/${id}`, {}).json<ToDoDto>();
+  getTodosById(id: number, kyInstance?: KyInstance) {
+    const instance = kyInstance ?? this.instance;
+
+    return instance.get<ToDoDto>(`todos/${id}`, {}).json();
   }
 
   /**
    * @tags todo
    * @summary ID를 사용해 TODO 내용을 수정합니다.
    * @request PUT:/todos/{id}*/
-  async putTodosById(id: number, data: ToDoDto) {
-    return this.instance
-      .put(`todos/${id}`, {
+  putTodosById(id: number, data: ToDoDto, kyInstance?: KyInstance) {
+    const instance = kyInstance ?? this.instance;
+
+    return instance
+      .put<ToDoDto>(`todos/${id}`, {
         json: data,
       })
-      .json<ToDoDto>();
+      .json();
   }
 
   /**
    * @tags todo
    * @summary ID에 해당하는 TODO를 제거합니다.
    * @request DELETE:/todos/{id}*/
-  async deleteTodosById(id: number) {
-    return this.instance.delete(`todos/${id}`, {}).json<void>();
+  deleteTodosById(id: number, kyInstance?: KyInstance) {
+    const instance = kyInstance ?? this.instance;
+
+    return instance.delete<void>(`todos/${id}`, {}).json();
   }
 }
 

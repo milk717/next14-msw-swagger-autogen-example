@@ -62,26 +62,31 @@ try {
   );
 
   const updatedContent = handlerFileContent
-    .replaceAll(
-      '...resultArray[next() % resultArray.length]',
-      '...responseSelector(request, resultArray)'
-    )
-    .replaceAll('async () => {', 'async ({ request }) => {')
-    .replaceAll(
-      "import { faker } from '@faker-js/faker';",
-      "import { faker } from '@faker-js/faker';\n" +
-        "import { responseSelector } from '~/msw/utils/response';"
-    )
-    .replaceAll(
-      'let i = 0;\n' +
-        'const next = () => {\n' +
-        '  if (i === Number.MAX_SAFE_INTEGER - 1) {\n' +
-        '    i = 0;\n' +
-        '  }\n' +
-        '  return i++;\n' +
-        '};\n\n',
-      ''
-    );
+      .replaceAll(
+          '...resultArray[next() % resultArray.length]',
+          '...responseSelector(request, resultArray)'
+      )
+      .replaceAll('async () => {', 'async ({ request }) => {')
+      .replaceAll(
+          "import { faker } from '@faker-js/faker';",
+          "import { faker } from '@faker-js/faker';\n" +
+          "import { responseSelector } from '~/msw/utils/response';"
+      )
+      .replaceAll(
+          'let i = 0;\n' +
+          'const next = () => {\n' +
+          '  if (i === Number.MAX_SAFE_INTEGER - 1) {\n' +
+          '    i = 0;\n' +
+          '  }\n' +
+          '  return i++;\n' +
+          '};\n\n',
+          ''
+      )
+      .replaceAll(
+          "import { faker } from \"@faker-js/faker\";\n",
+          "import { Faker, ko } from '@faker-js/faker';"
+      )
+      .replaceAll('faker.seed(1);', 'const faker = new Faker({ locale: [ko] });\nfaker.seed(1);');
 
   await saveFileContent(path.resolve(__dirname, '../msw/handlers.js'), updatedContent);
 } catch (err) {

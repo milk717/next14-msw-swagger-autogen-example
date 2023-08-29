@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query';
 
 import { ToDoDto } from '@/shared/api';
+
 import { todoApi } from './api';
 
 export const TODO_QUERY_KEY = {
@@ -41,6 +42,7 @@ export const useGetTodosQuery = <TData = ToDoDto[],>(
     ...options,
   });
 };
+
 /**
  * @tags todo
  * @summary ID를 사용해 TODO 리스트를 단건 조회합니다.
@@ -63,7 +65,7 @@ export const useGetTodosByIdQuery = <TData = ToDoDto,>(
  * @tags todo
  * @summary 모든 TODO 리스트 목록을 조회합니다.
  * @request GET:/todos*/
-export const useSuspenseGetTodosQuery = <TData = ToDoDto[],>(
+export const useGetTodosSuspenseQuery = <TData = ToDoDto[],>(
   options?: Omit<
     UseSuspenseQueryOptions<ToDoDto[], DefaultError, TData>,
     'queryKey' | 'queryFn'
@@ -74,11 +76,12 @@ export const useSuspenseGetTodosQuery = <TData = ToDoDto[],>(
     ...options,
   });
 };
+
 /**
  * @tags todo
  * @summary ID를 사용해 TODO 리스트를 단건 조회합니다.
  * @request GET:/todos/{id}*/
-export const useSuspenseGetTodosByIdQuery = <TData = ToDoDto,>(
+export const useGetTodosByIdSuspenseQuery = <TData = ToDoDto,>(
   id: number,
   options?: Omit<
     UseSuspenseQueryOptions<ToDoDto, DefaultError, TData>,

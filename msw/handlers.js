@@ -4,13 +4,12 @@
  */
 /* eslint-disable */
 /* tslint:disable */
-import { HttpResponse, http } from 'msw';
-import { faker } from '@faker-js/faker';
-import { responseSelector } from '~/msw/utils/response';
-
+import { HttpResponse, http } from "msw";
+import { Faker, ko } from '@faker-js/faker';
+const faker = new Faker({ locale: [ko] });
 faker.seed(1);
 
-const baseURL = 'https://api.todo-example.com/v1';
+const baseURL = "https://api.todo-example.com/v1";
 const MAX_ARRAY_LENGTH = 20;
 
 export const handlers = [
@@ -56,82 +55,82 @@ export function getGetTodos200Response() {
     ...new Array(faker.number.int({ min: 1, max: MAX_ARRAY_LENGTH })).keys(),
   ].map((_) => ({
     id: 1,
-    title: '피아노 연습하기',
-    description: '다음 주 레슨을 위한 연습하기',
-    status: 'PENDING',
+    title: "피아노 연습하기",
+    description: "다음 주 레슨을 위한 연습하기",
+    status: "PENDING",
   }));
 }
 
 export function getGetTodos400Response() {
   return {
     code: 400,
-    name: 'Bad Request',
-    message: 'The request was invalid.',
+    name: "Bad Request",
+    message: "The request was invalid.",
   };
 }
 
 export function getGetTodoById200Response() {
   return {
     id: 1,
-    title: '피아노 연습하기',
-    description: '다음 주 레슨을 위한 연습하기',
-    status: 'PENDING',
+    title: "피아노 연습하기",
+    description: "다음 주 레슨을 위한 연습하기",
+    status: "PENDING",
   };
 }
 
 export function getGetTodoById400Response() {
   return {
     code: 400,
-    name: 'Bad Request',
-    message: 'The request was invalid.',
+    name: "Bad Request",
+    message: "The request was invalid.",
   };
 }
 
 export function getGetTodoById404Response() {
   return {
     code: 400,
-    name: 'Bad Request',
-    message: 'The request was invalid.',
+    name: "Bad Request",
+    message: "The request was invalid.",
   };
 }
 
 export function getUpdateTodo200Response() {
   return {
     id: 1,
-    title: '피아노 연습하기',
-    description: '다음 주 레슨을 위한 연습하기',
-    status: 'PENDING',
+    title: "피아노 연습하기",
+    description: "다음 주 레슨을 위한 연습하기",
+    status: "PENDING",
   };
 }
 
 export function getUpdateTodo400Response() {
   return {
     code: 400,
-    name: 'Bad Request',
-    message: 'The request was invalid.',
+    name: "Bad Request",
+    message: "The request was invalid.",
   };
 }
 
 export function getUpdateTodo404Response() {
   return {
     code: 400,
-    name: 'Bad Request',
-    message: 'The request was invalid.',
+    name: "Bad Request",
+    message: "The request was invalid.",
   };
 }
 
 export function getDeleteTodo400Response() {
   return {
     code: 400,
-    name: 'Bad Request',
-    message: 'The request was invalid.',
+    name: "Bad Request",
+    message: "The request was invalid.",
   };
 }
 
 export function getDeleteTodo404Response() {
   return {
     code: 400,
-    name: 'Bad Request',
-    message: 'The request was invalid.',
+    name: "Bad Request",
+    message: "The request was invalid.",
   };
 }

@@ -1,9 +1,11 @@
-import { ToDoDto } from '@/shared/api';
 import {
   DefaultError,
   useMutation,
   UseMutationOptions,
 } from '@tanstack/react-query';
+
+import { ToDoDto } from '@/shared/api';
+
 import { todoApi } from './api';
 
 const mutations = {

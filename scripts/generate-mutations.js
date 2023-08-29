@@ -23,6 +23,7 @@ generateApi({
   modular: true,
   moduleNameFirstTag: true,
   moduleNameIndex: 1,
+  typeSuffix: 'Dto',
 })
   .then(({ files }) => {
     files.forEach(({ fileName, fileContent }) => {
