@@ -1,0 +1,38 @@
+<%
+const { utils, route, config } = it;
+const { _, pascalCase } = utils;
+const routeDocs = includeFile("./route-docs", { config, route, utils });
+
+const functionName = route.request.method+pascalCase(`${route.request.path
+        .split('/')
+        .map((segment) =>
+                segment.includes('${') ? `By_${segment.replace(/[${}]/g, '')}` : segment
+        )
+        .join('_')}`);
+
+const responseType = route.responseBodyInfo?.success?.type || 'any';
+const pathParams = _.values(route.request.parameters);
+const hasPathParams = pathParams.length > 0;
+const payload = route.request.payload;
+const query = route.request.query;
+%>
+
+/**
+<%~ routeDocs.lines %>
+*/
+async <%= functionName %>(<%=
+[
+    ...(hasPathParams ? pathParams.map(param => `${param.name}: ${param.type}`) : []),
+    ...(query ? [`params: ${query.type}`] : []),
+    ...(payload ? [`data: ${payload.type}`] : [])
+].join(', ')
+%>) {
+return this.instance.<%= route.request.method.toLowerCase() %>(`<%= route.request.path.replace(/{/g, '{').replace(/}/g, '}') %>`, {
+<% if (query) { %>
+    searchParams: params,
+<% } %>
+<% if (payload) { %>
+    json: data,
+<% } %>
+}).json<<%= responseType %>>();
+}

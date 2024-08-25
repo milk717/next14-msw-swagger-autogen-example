@@ -2,7 +2,7 @@ const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs/promises');
 
-const swaggerFilePath = path.resolve(__dirname, '../msw/swagger/todo-api.yml');
+const swaggerFilePath = path.resolve(__dirname, './swagger/todo-api.yml');
 const outputDir = path.resolve(__dirname, '../msw');
 
 const command = `yarn run msw-auto-mock ${swaggerFilePath} -o ${outputDir} --base-url https://api.todo-example.com/v1`;
