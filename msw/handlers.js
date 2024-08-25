@@ -10,7 +10,7 @@ import { responseSelector } from '~/msw/utils/response';
 
 faker.seed(1);
 
-const baseURL = '';
+const baseURL = 'https://api.todo-example.com/v1';
 const MAX_ARRAY_LENGTH = 20;
 
 export const handlers = [
