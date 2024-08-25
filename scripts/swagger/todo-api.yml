@@ -158,6 +158,7 @@ components:
             - COMPLETED
           example: PENDING
       required:
+        - id
         - title
         - status
     ErrorResponse:

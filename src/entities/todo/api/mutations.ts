@@ -1,15 +1,42 @@
-import { DefaultError, useMutation, UseMutationOptions } from '@tanstack/react-query';
-
+import { ToDoDto } from '@/shared/api';
+import {
+  DefaultError,
+  useMutation,
+  UseMutationOptions,
+} from '@tanstack/react-query';
 import { todoApi } from './api';
 
 const mutations = {
+  putTodosById: () => ({
+    mutationFn: (variables: TPutTodosByIdVariables) => {
+      const { id, body } = variables;
+      return todoApi.putTodosById(id, body);
+    },
+    mutationKey: ['todos'],
+  }),
   deleteTodosById: () => ({
     mutationFn: (variables: TDeleteTodosByIdVariables) => {
       const { id } = variables;
       return todoApi.deleteTodosById(id);
     },
-    mutationKey: ['todo'],
+    mutationKey: ['todos'],
   }),
+};
+
+/**
+ * @tags todo
+ * @summary ID를 사용해 TODO 내용을 수정합니다.
+ * @request PUT:/todos/{id}*/
+export const usePutTodosByIdMutation = (
+  options?: Omit<
+    UseMutationOptions<ToDoDto, DefaultError, TPutTodosByIdVariables>,
+    'mutationFn' | 'mutationKey'
+  >
+) => {
+  return useMutation({
+    ...mutations.putTodosById(),
+    ...options,
+  });
 };
 
 /**
@@ -28,4 +55,5 @@ export const useDeleteTodosByIdMutation = (
   });
 };
 
+type TPutTodosByIdVariables = { id: number; body: ToDoDto };
 type TDeleteTodosByIdVariables = { id: number };

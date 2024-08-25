@@ -32,7 +32,7 @@ const getRequestParams = ({ parameters = [], payload }) => ({
 });
 
 const mutationConfigs = routes
-        .filter(({ request: { method } }) => method === 'post' || method === 'patch' || method === 'delete')
+        .filter(({ request: { method } }) => method === 'post' || method === 'patch' ||  method === 'put' ||method === 'delete')
         .map(route => {
             const functionName = getFunctionName(route);
             const { request, response } = route;
@@ -73,7 +73,7 @@ const mutations = {
     const { <%= config.requestParamsWithoutTypes %> } = variables;
     return <%= moduleName %>Api.<%= config.functionName %>(<%= config.requestParamsWithoutTypes %>);
     }<% } else { %>() => <%= moduleName %>Api.<%= config.functionName %>()<% } %>,
-    mutationKey: [ '<%~ moduleName %>' ]
+    mutationKey: [ '<%~ config.route.raw.route.split('/')[1] %>' ]
     }),
 <% } %>
 };

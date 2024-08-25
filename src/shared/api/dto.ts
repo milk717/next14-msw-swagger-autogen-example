@@ -3,7 +3,7 @@ export interface ToDoDto {
    * The unique ID of the task
    * @example 1
    */
-  id?: number;
+  id: number;
   /**
    * The title of the task
    * @example "피아노 연습하기"
