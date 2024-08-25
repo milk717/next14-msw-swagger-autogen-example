@@ -27,7 +27,7 @@ async <%= functionName %>(<%=
     ...(payload ? [`data: ${payload.type}`] : [])
 ].join(', ')
 %>) {
-return this.instance.<%= route.request.method.toLowerCase() %>(`<%= route.request.path.replace(/{/g, '{').replace(/}/g, '}') %>`, {
+return this.instance.<%= route.request.method.toLowerCase() %>(`<%= route.request.path.replace(/{/g, '{').replace(/}/g, '}').slice(1,) %>`, {
 <% if (query) { %>
     searchParams: params,
 <% } %>

@@ -14,7 +14,7 @@ export class TodoApi {
    * @summary 모든 TODO 리스트 목록을 조회합니다.
    * @request GET:/todos*/
   async getTodos() {
-    return this.instance.get(`/todos`, {}).json<ToDoDto[]>();
+    return this.instance.get(`todos`, {}).json<ToDoDto[]>();
   }
 
   /**
@@ -22,7 +22,7 @@ export class TodoApi {
    * @summary ID를 사용해 TODO 리스트를 단건 조회합니다.
    * @request GET:/todos/{id}*/
   async getTodosById(id: number) {
-    return this.instance.get(`/todos/${id}`, {}).json<ToDoDto>();
+    return this.instance.get(`todos/${id}`, {}).json<ToDoDto>();
   }
 
   /**
@@ -31,7 +31,7 @@ export class TodoApi {
    * @request PUT:/todos/{id}*/
   async putTodosById(id: number, data: ToDoDto) {
     return this.instance
-      .put(`/todos/${id}`, {
+      .put(`todos/${id}`, {
         json: data,
       })
       .json<ToDoDto>();
@@ -42,7 +42,7 @@ export class TodoApi {
    * @summary ID에 해당하는 TODO를 제거합니다.
    * @request DELETE:/todos/{id}*/
   async deleteTodosById(id: number) {
-    return this.instance.delete(`/todos/${id}`, {}).json<void>();
+    return this.instance.delete(`todos/${id}`, {}).json<void>();
   }
 }
 
