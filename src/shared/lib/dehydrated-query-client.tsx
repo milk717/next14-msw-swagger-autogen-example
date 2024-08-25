@@ -12,6 +12,11 @@ const isSameQueryKey = (q1: QueryKey, q2: QueryKey) => {
 };
 
 const queryClientConfig: QueryClientConfig = {
+  defaultOptions: {
+    queries: {
+      staleTime: 10000,
+    },
+  },
   mutationCache: new MutationCache({
     onSuccess: (_data, _variables, _context, mutation) => {
       const queryClient = getQueryClient();
