@@ -20,7 +20,7 @@ export const handlers = [
       [await getGetTodos400Response(), { status: 400 }],
     ];
 
-    return HttpResponse.json(responseSelector(request, resultArray));
+    return HttpResponse.json(...responseSelector(request, resultArray));
   }),
   http.get(`${baseURL}/todos/:id`, async ({ request }) => {
     const resultArray = [
@@ -29,7 +29,7 @@ export const handlers = [
       [await getGetTodoById404Response(), { status: 404 }],
     ];
 
-    return HttpResponse.json(responseSelector(request, resultArray));
+    return HttpResponse.json(...responseSelector(request, resultArray));
   }),
   http.put(`${baseURL}/todos/:id`, async ({ request }) => {
     const resultArray = [
@@ -38,7 +38,7 @@ export const handlers = [
       [await getUpdateTodo404Response(), { status: 404 }],
     ];
 
-    return HttpResponse.json(responseSelector(request, resultArray));
+    return HttpResponse.json(...responseSelector(request, resultArray));
   }),
   http.delete(`${baseURL}/todos/:id`, async ({ request }) => {
     const resultArray = [
@@ -47,7 +47,7 @@ export const handlers = [
       [await getDeleteTodo404Response(), { status: 404 }],
     ];
 
-    return HttpResponse.json(responseSelector(request, resultArray));
+    return HttpResponse.json(...responseSelector(request, resultArray));
   }),
 ];
 

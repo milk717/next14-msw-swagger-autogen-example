@@ -1,6 +1,12 @@
-const { exec } = require('child_process');
-const path = require('path');
-const fs = require('fs/promises');
+import { exec } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { promises as fs } from 'fs';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const swaggerFilePath = path.resolve(__dirname, './swagger/todo-api.yml');
 const outputDir = path.resolve(__dirname, '../msw');
@@ -36,55 +42,48 @@ const saveFileContent = async (filePath, content) => {
   }
 };
 
-exec(command, async (error, stdout, stderr) => {
-  if (error) {
-    console.error(`⚠️ Error executing command: ${error.message}`);
-    return;
-  }
+try {
+  const { stdout, stderr } = await execAsync(command);
 
   if (stderr) {
     console.error(`⚠️ Error output: ${stderr}`);
-    return;
   }
 
   console.log('✅ Msw handler was successfully created.');
 
-  try {
-    await removeUnnecessaryFiles();
+  await removeUnnecessaryFiles();
 
-    await convertToTs(path.resolve(__dirname, '../msw/browser.js'));
-    await convertToTs(path.resolve(__dirname, '../msw/node.js'));
+  await convertToTs(path.resolve(__dirname, '../msw/browser.js'));
+  await convertToTs(path.resolve(__dirname, '../msw/node.js'));
 
-    const handlerFileContent = await fs.readFile(
-      path.resolve(__dirname, '../msw/handlers.js'),
-      'utf-8'
+  const handlerFileContent = await fs.readFile(
+    path.resolve(__dirname, '../msw/handlers.js'),
+    'utf-8'
+  );
+
+  const updatedContent = handlerFileContent
+    .replaceAll(
+      '...resultArray[next() % resultArray.length]',
+      '...responseSelector(request, resultArray)'
+    )
+    .replaceAll('async () => {', 'async ({ request }) => {')
+    .replaceAll(
+      "import { faker } from '@faker-js/faker';",
+      "import { faker } from '@faker-js/faker';\n" +
+        "import { responseSelector } from '~/msw/utils/response';"
+    )
+    .replaceAll(
+      'let i = 0;\n' +
+        'const next = () => {\n' +
+        '  if (i === Number.MAX_SAFE_INTEGER - 1) {\n' +
+        '    i = 0;\n' +
+        '  }\n' +
+        '  return i++;\n' +
+        '};\n\n',
+      ''
     );
 
-    await saveFileContent(
-      path.resolve(__dirname, '../msw/handlers.js'),
-      handlerFileContent
-        .replaceAll(
-          '...resultArray[next() % resultArray.length]',
-          'responseSelector(request, resultArray)'
-        )
-        .replaceAll('async () => {', 'async ({ request }) => {')
-        .replaceAll(
-          "import { faker } from '@faker-js/faker';",
-          "import { faker } from '@faker-js/faker';\n" +
-            "import { responseSelector } from '~/msw/utils/response';"
-        )
-        .replaceAll(
-          'let i = 0;\n' +
-            'const next = () => {\n' +
-            '  if (i === Number.MAX_SAFE_INTEGER - 1) {\n' +
-            '    i = 0;\n' +
-            '  }\n' +
-            '  return i++;\n' +
-            '};\n\n',
-          ''
-        )
-    );
-  } catch (err) {
-    console.error(`⚠️ Error deleting file: ${err.message}`);
-  }
-});
+  await saveFileContent(path.resolve(__dirname, '../msw/handlers.js'), updatedContent);
+} catch (err) {
+  console.error(`⚠️ Error executing script: ${err.message}`);
+}
