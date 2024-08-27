@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 
-const MSWProvider = ({ children }: { children: React.ReactNode }) => {
+const MSWProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [mswReady, setMswReady] = useState(false);
 
   useEffect(() => {
