@@ -11,8 +11,8 @@
     "lint": "next lint",
     "generate-msw": "node scripts/generate-msw.js",
     "generate-api": "node scripts/generate-api.js",
-    "generate-queries": "node scripts/generate-queries.js",
-    "generate-mutations": "node scripts/generate-mutations.js"
+    "generate-queries": "node scripts/generate-hooks.js -h queries",
+    "generate-mutations": "node scripts/generate-hooks.js -h mutations"
   },
   "dependencies": {
     "@nextui-org/button": "^2.0.37",
@@ -39,6 +39,7 @@
     "env-cmd": "^10.1.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.6",
+    "minimist": "^1.2.8",
     "msw": "^2.3.5",
     "msw-auto-mock": "^0.25.0",
     "postcss": "^8",
